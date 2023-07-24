@@ -6,6 +6,7 @@ library("ggplot2")
 library('ggrepel')
 library('org.Hs.eg.db')
 library('enrichR')
+library('stringr')
 
 setwd("~/Documents/Uni/Immunology/Project/Data/final_data_meta")
 
@@ -119,7 +120,7 @@ names(enriched.up)
 #upreg EGFR signalling, we know this is directly upstream from KRAS 
 
 enriched.down <- enrichr(geneSymbRes$SYMBOL[geneSymbRes$diffexpressed == 'DOWN'], enr.dbs)
-enriched.down
+names(enriched.down)
 
 
 enr.bio.pros.up <- enriched.up[["GO_Biological_Process_2017"]] 
@@ -149,4 +150,76 @@ ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = Term)) +
   geom_bar(stat = 'identity') + 
   scale_y_discrete(aesthetics = NULL, scale_name = Term, palette = "Set1", breaks = waiver())
 
+#use stringr to sort strings str_wrap
+
 #will have to fix properly for paper
+
+#ask about KRAS mutations, not sure how to pick extra for writing about, dont cover all the ones in the new doc
+#ask about the code that sorted the data into the 'final_data' and if i need it
+#protein database uniprot to look at kras structure, maybe use as picture for intro
+
+###
+#Attempt with stringr
+
+#OG ugly graphs
+ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = Term)) +
+  geom_bar(stat = 'identity')
+
+
+
+ggplot(data = enr.bio.pros.down, mapping = aes(x = Odds.Ratio, y = Term)) +
+  geom_bar(stat = 'identity')
+
+
+#Adding y axis text to str_wrap
+
+enr.up_yaxis <- str_wrap(colnames(enr.bio.pros.up), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+
+enr.down_yaxis <- str_wrap(colnames(enr.bio.pros.down), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+
+ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = enr.up_yaxis)) +
+  geom_bar(stat = 'identity')
+
+#^this doesnt work, aesthetics must be length 1 or same length as data 
+
+ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = Term)) +
+  geom_bar(stat = 'identity') +
+  scale_y_discrete(labels = function(y) str_wrap(y, width = 65), )
+#^ this is a lot better but there are overlaps
+
+ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = Term)) +
+  geom_bar(stat = 'identity') +
+  scale_y_discrete(labels = function(y) str_wrap(y, width = 65), ) +
+  guides(guide_axis(check.overlap = TRUE))
+#^no difference, very ugly overlaps 
+
+ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = reorder(Term, Odds.Ratio))) +
+  geom_bar(stat = 'identity') +
+  scale_y_discrete(labels = function(y) str_wrap(y, width = 65))
+#removed guides for now, ordered the y axis by odds ratio 
+
+ggplot(data = enr.bio.pros.down, mapping = aes(x = Odds.Ratio, y = reorder(Term, Odds.Ratio))) +
+  geom_bar(stat = 'identity') +
+  scale_y_discrete(labels = function(y) str_wrap(y, width = 65))
+#same as above but for down reg
+
+###
+
+
+#starting over but making new column in data
+
+enr.bio.pros.up$up_y.axis <- str_wrap(colnames(enr.bio.pros.up), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+
+enr.bio.pros.down$down_y.axis <- str_wrap(colnames(enr.bio.pros.down), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+
+#Error in `$<-.data.frame`(`*tmp*`, up_y.axis, value = c("Term", "Overlap",  : replacement has 9 rows, data has 210
+
+#
+
+
+#statistically significant 
+
+sig.enr.up <- enr.bio.pros.up %in% 'Adjusted.P.value' < 0.01 #logical values
+
+
+
