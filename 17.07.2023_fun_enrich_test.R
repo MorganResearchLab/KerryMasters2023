@@ -173,9 +173,9 @@ ggplot(data = enr.bio.pros.down, mapping = aes(x = Odds.Ratio, y = Term)) +
 
 #Adding y axis text to str_wrap
 
-enr.up_yaxis <- str_wrap(colnames(enr.bio.pros.up), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+#enr.up_yaxis <- str_wrap(colnames(enr.bio.pros.up), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
 
-enr.down_yaxis <- str_wrap(colnames(enr.bio.pros.down), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+#enr.down_yaxis <- str_wrap(colnames(enr.bio.pros.down), width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
 
 ggplot(data = enr.bio.pros.up, mapping = aes(x = Odds.Ratio, y = enr.up_yaxis)) +
   geom_bar(stat = 'identity')
@@ -203,6 +203,7 @@ ggplot(data = enr.bio.pros.down, mapping = aes(x = Odds.Ratio, y = reorder(Term,
   scale_y_discrete(labels = function(y) str_wrap(y, width = 65))
 #same as above but for down reg
 
+
 ###
 
 
@@ -214,12 +215,51 @@ enr.bio.pros.down$down_y.axis <- str_wrap(colnames(enr.bio.pros.down), width = 7
 
 #Error in `$<-.data.frame`(`*tmp*`, up_y.axis, value = c("Term", "Overlap",  : replacement has 9 rows, data has 210
 
-#
+#$ for dataframes, [] for matrix
+
+#/n is seperator for new line
+
+#start writing on pen and paper 
 
 
 #statistically significant 
 
-sig.enr.up <- enr.bio.pros.up %in% 'Adjusted.P.value' < 0.01 #logical values
+ #%in% causes logical values, this selects columns, only want to select rows where value is below a specific point
+
+#indexing rows, not column so use right hand of [,], data[data$subset<5,] (always < then = in that order)
+#can use %in% if there are certain values you want to pick out. has to be specific though, not threshhold
+
+sig.enr.up <- enr.bio.pros.up[enr.bio.pros.up$Adjusted.P.value<0.1,]
+
+#start from scratch if unsure/wrong
+#keep seperate file for incorrect code
+
+###
+
+#new column for the str_wrap strings
+enr.bio.pros.up$up_y.axis <- str_wrap(enr.bio.pros.up$Term, width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+enr.bio.pros.up$up_y.axis
+
+enr.bio.pros.down$down_y.axis <- str_wrap(enr.bio.pros.down$Term, width = 70, indent = 0, exdent = 0, whitespace_only = TRUE)
+enr.bio.pros.down$down_y.axis
 
 
+#remake the ggplots
 
+enr.bio.pros.up.sig <- enr.bio.pros.up[enr.bio.pros.up$'Adjusted.P.value'<0.1,]
+enr.bio.pros.up.sig
+
+enr.bio.pros.down.sig <- enr.bio.pros.down[enr.bio.pros.down$'Adjusted.P.value'<0.1,]
+enr.bio.pros.up.sig
+
+
+ggplot(data = enr.bio.pros.up.sig, mapping = aes(x = Odds.Ratio, y = reorder(up_y.axis, Odds.Ratio))) +
+  geom_bar(stat = 'identity') 
+
+
+ggplot(data = enr.bio.pros.down.sig, mapping = aes(x = Odds.Ratio, y = down_y.axis)) +
+  geom_bar(stat = 'identity')
+  
+ggplot(data = enr.bio.pros.down.sig, mapping = aes(x = Odds.Ratio, y = reorder(down_y.axis, Odds.Ratio))) +
+  geom_bar(stat = 'identity')
+#dont know why it comes back with 'object 'Odds.ratio' not found'
