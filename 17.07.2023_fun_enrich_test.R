@@ -229,7 +229,7 @@ enr.bio.pros.down$down_y.axis <- str_wrap(colnames(enr.bio.pros.down), width = 7
 #indexing rows, not column so use right hand of [,], data[data$subset<5,] (always < then = in that order)
 #can use %in% if there are certain values you want to pick out. has to be specific though, not threshhold
 
-sig.enr.up <- enr.bio.pros.up[enr.bio.pros.up$Adjusted.P.value<0.1,]
+#sig.enr.up <- enr.bio.pros.up[enr.bio.pros.up$Adjusted.P.value<0.1,]
 
 #start from scratch if unsure/wrong
 #keep seperate file for incorrect code
@@ -254,12 +254,11 @@ enr.bio.pros.up.sig
 
 
 ggplot(data = enr.bio.pros.up.sig, mapping = aes(x = Odds.Ratio, y = reorder(up_y.axis, Odds.Ratio))) +
-  geom_bar(stat = 'identity') 
+  geom_bar(stat = 'identity') +
+  ylab('Function') + xlab('Odds Ratio')
 
-
-ggplot(data = enr.bio.pros.down.sig, mapping = aes(x = Odds.Ratio, y = down_y.axis)) +
-  geom_bar(stat = 'identity')
   
 ggplot(data = enr.bio.pros.down.sig, mapping = aes(x = Odds.Ratio, y = reorder(down_y.axis, Odds.Ratio))) +
-  geom_bar(stat = 'identity')
-#dont know why it comes back with 'object 'Odds.ratio' not found'
+  geom_bar(stat = 'identity') +
+  ylab('Function') + xlab('Odds Ratio')
+
