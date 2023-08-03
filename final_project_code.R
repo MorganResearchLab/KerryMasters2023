@@ -183,10 +183,15 @@ enr.bio.pros.up.sig
 
 ggplot(data = enr.bio.pros.up.sig, mapping = aes(x = Odds.Ratio, y = reorder(up_y.axis, Odds.Ratio))) +
   geom_bar(stat = 'identity') +
-  ylab('Biological Function Term') + xlab('Odds Ratio')
+  ylab('Biological Function Term') + xlab('Odds Ratio') +
+  scale_y_discrete(limits=rev)
 
+down_func <- c('regulation of TORC1 signaling (GO:1903432)', 'microglial cell activation (GO:0001774)', 'single strand break repair (GO:0000012)',
+               'retinal ganglion cell axon guidance (GO:0031290)', 'response to amino acid (GO:0043200)', 'positive regulation of helicase activity (GO:0051096)')
 
 ggplot(data = enr.bio.pros.down.sig, mapping = aes(x = Odds.Ratio, y = reorder(down_y.axis, Odds.Ratio))) +
   geom_bar(stat = 'identity') +
-  ylab('Biological Function Term') + xlab('Odds Ratio')
+  ylab('Biological Function Term') + xlab('Odds Ratio') +
+  ylim('regulation of TORC1 signaling (GO:1903432)', 'microglial cell activation (GO:0001774)', 'single strand break repair (GO:0000012)',
+       'retinal ganglion cell axon guidance (GO:0031290)', 'response to amino acid (GO:0043200)', 'positive regulation of helicase activity (GO:0051096)')
 
